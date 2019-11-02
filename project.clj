@@ -1,6 +1,6 @@
 (defproject substrate-sample "0.1.0-SNAPSHOT"
-  :description "FIXME"
-  :url "https://github.com/FIXME/substrate-sample"
+  :description "A sample project generated using rinx/substrate"
+  :url "https://github.com/rinx/substrate-sample"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.10.1"]

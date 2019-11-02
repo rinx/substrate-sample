@@ -1,5 +1,4 @@
 FROM clojure:lein-alpine as builder
-LABEL maintainer "FIXME <FIXME>"
 
 RUN set -eux && apk update && apk --no-cache add git openssh
 
@@ -12,7 +11,6 @@ COPY . /usr/src/app
 RUN mv "$(lein uberjar | sed -n 's/^Created \(.*standalone\.jar\)/\1/p')" app-standalone.jar
 
 FROM alpine:latest
-LABEL maintainer "FIXME <FIXME>"
 
 RUN set -eux && apk update && apk --no-cache add openjdk8-jre
 
