@@ -1,27 +1,34 @@
-FROM clojure:lein-alpine as builder
+ARG GRAALVM_VERSION=latest
 
-RUN set -eux && apk update && apk --no-cache add git openssh
+FROM oracle/graalvm-ce:${GRAALVM_VERSION} as graalvm
 
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+LABEL maintainer "rinx <rintaro.okamura@gmail.com>"
 
-COPY project.clj /usr/src/app/
+RUN gu install native-image
+RUN curl -o /usr/bin/lein https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein \
+    && chmod a+x /usr/bin/lein
+
+RUN mkdir -p /substrate
+WORKDIR /substrate
+
+COPY project.clj project.clj
+
 RUN lein deps
-COPY . /usr/src/app
-RUN mv "$(lein uberjar | sed -n 's/^Created \(.*standalone\.jar\)/\1/p')" app-standalone.jar
 
-FROM alpine:latest
+COPY src src
 
-RUN set -eux && apk update && apk --no-cache add openjdk8-jre
+RUN lein uberjar
 
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+COPY native-config native-config
 
-COPY --from=builder /usr/src/app/app-standalone.jar /usr/src/app/app-standalone.jar
+COPY Makefile Makefile
 
-ENV PORT 8080
-ENV HEALTH_PORT 8081
+RUN make
 
-EXPOSE ${PORT} ${HEALTH_PORT}
-ENTRYPOINT ["/usr/bin/java"]
-CMD ["-Djava.security.policy=/usr/src/app/java.policy", "-jar", "app-standalone.jar"]
+FROM ubuntu:latest
+
+LABEL maintainer "rinx <rintaro.okamura@gmail.com>"
+
+COPY --from=graalvm /substrate/server /server
+
+CMD ["/server"]
