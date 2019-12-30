@@ -9,10 +9,10 @@
                  [org.clojure/tools.cli "0.4.2"]
                  [com.stuartsierra/component "0.4.0"]
                  [com.taoensso/timbre "4.10.0"]
-                 [orchestra "2019.02.06-1"]
                  [http-kit "2.3.0"]
                  [compojure "1.6.1"]]
-  :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.2.11"]]
+  :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.2.11"]
+                                  [orchestra "2019.02.06-1"]]
                    :source-paths ["dev"]}
              :uberjar {:aot :all
                        :main substrate-sample.core}})
